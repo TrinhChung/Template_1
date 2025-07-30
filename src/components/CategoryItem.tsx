@@ -13,7 +13,7 @@ const CategoryItem = ({
     <div className="w-[600px] relative group max-[1250px]:w-[400px] max-[1250px]:h-[400px] max-sm:w-[300px] max-sm:h-[300px] rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300">
       <Link to={`/shop/${link}`}>
         <img
-          src={`/src/assets/${image}`}
+          src={`/assets/${image}`}
           className="h-full w-full object-cover transition-all duration-300 group-hover:scale-105 group-hover:brightness-110"
           alt={categoryTitle}
         />
