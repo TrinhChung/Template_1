@@ -19,8 +19,11 @@ import { checkoutAction, searchAction } from "./actions/index";
 import { shopCategoryLoader } from "./pages/Shop";
 import { loader as orderHistoryLoader } from "./pages/OrderHistory";
 import { loader as singleOrderLoader } from "./pages/SingleOrderHistory";
-import { useEffect } from "react";          // Xóa useState đi!
-import customFetch from "./axios/custom";
+
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { fetchCompany } from "./features/company/companySlice";
+import { AppDispatch } from "./store";
 
 const router = createBrowserRouter([
   {
@@ -46,24 +49,23 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  const dispatch = useDispatch<AppDispatch>();
+
   useEffect(() => {
-    const fetchLogo = async () => {
-      try {
-        const res = await customFetch.get("/company");
-        const data = res.data;
-        // Đổi favicon trực tiếp, không cần setState
-        const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
-        if (favicon && data.logo_url) {
-          favicon.href = data.logo_url.startsWith("http")
-            ? data.logo_url
-            : import.meta.env.VITE_API_URL + data.logo_url;
+    // Fetch company info vào redux store, đồng thời đổi favicon nếu có logo
+    dispatch(fetchCompany())
+      .unwrap()
+      .then((data) => {
+        if (data.logo_url) {
+          const favicon = document.querySelector("link[rel~='icon']") as HTMLLinkElement | null;
+          if (favicon) {
+            favicon.href = data.logo_url.startsWith("http")
+              ? data.logo_url
+              : import.meta.env.VITE_API_URL + data.logo_url;
+          }
         }
-      } catch (e) {
-        console.error("Could not fetch company logo", e);
-      }
-    };
-    fetchLogo();
-  }, []);
+      });
+  }, [dispatch]);
 
   return <RouterProvider router={router} />;
 }

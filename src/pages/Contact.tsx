@@ -1,39 +1,16 @@
-import { useEffect, useState } from "react";
-import customFetch from "../axios/custom";
+import { useEffect } from "react";
+import { useAppSelector } from "../hooks";
 import { FaMapMarkerAlt, FaPhoneAlt, FaEnvelope, FaIdCard } from "react-icons/fa";
 
-interface Company {
-  id: number;
-  name: string;
-  address: string;
-  hotline: string;
-  email: string;
-  license_no?: string;
-  google_map_embed?: string;
-  logo_url?: string;
-  footer_text?: string;
-  description?: string;
-  note?: string;
-  user_id?: number;
-}
-
 const Contact = () => {
-  const [company, setCompany] = useState<Company | null>(null);
+  const company = useAppSelector((state) => state.company.data);
+  const status = useAppSelector((state) => state.company.status);
 
   useEffect(() => {
     document.title = "Contact";
-    const fetchCompany = async () => {
-      try {
-        const response = await customFetch.get("/company");
-        setCompany(response.data);
-      } catch (error) {
-        console.error("Failed to fetch company info", error);
-      }
-    };
-    fetchCompany();
   }, []);
 
-  if (!company) {
+  if (status === "loading" || !company) {
     return <div className="max-w-screen-2xl mx-auto px-5 mt-24">Loading...</div>;
   }
 
